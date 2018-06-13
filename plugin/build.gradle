@@ -1,0 +1,81 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+apply plugin: 'maven-publish'
+apply plugin: 'groovy'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+apply plugin: 'maven'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+String extractVersionName() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        workingDir projectDir
+        executable 'git'
+        args 'describe', '--tags', '--always'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+version = extractVersionName()
+group = 'at.allaboutapps.gradle'
+
+bintray {
+    user = 'allaboutapps'
+    // read pw from secure travis.yml
+    key = System.getenv('BINTRAY_KEY')
+
+    publications = ['mavenJava']
+    pkg {
+        repo = 'A3-Android'
+        name = "$project.group.$archivesBaseName"
+
+        version {
+            name = project.version
+            desc = ''
+            vcsTag = System.getenv('TRAVIS_TAG')
+        }
+
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/allaboutapps/A3GradlePlugin'
+        websiteUrl = 'http://www.allaboutapps.at'
+    }
+    configurations = ['archives']
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'This plugin enables us (aaa) to facilitate our internal test and release workflows by having a common, shared build setup.')
+            }
+        }
+    }
+}
