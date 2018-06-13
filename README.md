@@ -1,6 +1,7 @@
 ## A3Gradle Plugin
 
 [![Build Status](https://travis-ci.org/allaboutapps/A3GradlePlugin.svg?branch=master)](https://travis-ci.org/allaboutapps/A3GradlePlugin)
+ [![Download](https://api.bintray.com/packages/allaboutapps/A3-Android/at.allaboutapps.gradle.plugin/images/download.svg) ](https://bintray.com/allaboutapps/A3-Android/at.allaboutapps.gradle.plugin/_latestVersion)
 
 
 This plugin enables us (aaa) to facilitate our internal test and release workflows by having a common, shared build setup.
