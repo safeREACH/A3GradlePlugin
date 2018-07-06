@@ -2,6 +2,7 @@ package at.allaboutapps.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 
 class A3GradlePlugin implements Plugin<Project> {
 
@@ -9,8 +10,8 @@ class A3GradlePlugin implements Plugin<Project> {
 
         def unsigned = false
 
-        def gitVersionCode = extractVersionCode(target.projectDir)
-        def gitVersionName = extractVersionName(target.projectDir)
+        def gitVersionCode = extractVersionCode(target.logger, target.projectDir)
+        def gitVersionName = extractVersionName(target.logger, target.projectDir)
 
         target.android.defaultConfig {
             versionCode gitVersionCode
@@ -114,24 +115,38 @@ class A3GradlePlugin implements Plugin<Project> {
         }
     }
 
-    static String extractVersionName(File projectDir) {
-        def stdout = new ByteArrayOutputStream()
-        String[] args = ["git", "describe", "--tags", "--always"]
-        Process process = Runtime.getRuntime().exec(args, null, projectDir)
-        process.consumeProcessOutputStream(stdout)
-        process.waitForOrKill(10 * 1000)
-
-        return stdout.toString().trim()
+    static String extractVersionName(Logger logger, File projectDir) {
+        def result = executeCommand(["git", "describe", "--tags", "--always"] as String[], projectDir, logger)
+        try {
+            return result.toString().trim()
+        } catch (Exception e) {
+            logger.warn("Could not read version name from `$result`, defaulting to `1.0.0 (?)`")
+            return "1.0.0 (?)"
+        }
     }
 
-    static int extractVersionCode(File projectDir) {
-        def stdout = new ByteArrayOutputStream()
-        String[] args = ["git", "rev-list", "--count", "HEAD"]
+    static int extractVersionCode(Logger logger, File projectDir) {
+        def result = executeCommand(["git", "rev-list", "--count", "HEAD"] as String[], projectDir, logger)
+        try {
+            result.trim().toInteger()
+        } catch (Exception e) {
+            logger.warn("Could not read version code from `$result`, defaulting to `1`")
+            return 1
+        }
+    }
 
-        Process process = Runtime.getRuntime().exec(args, null, projectDir)
-        process.consumeProcessOutputStream(stdout)
-        process.waitForOrKill(10 * 1000)
+    static String executeCommand(String[] args, File projectDir, Logger logger) {
+        try {
+            def stdout = new ByteArrayOutputStream()
 
-        return stdout.toString().trim().toInteger()
+            Process process = Runtime.getRuntime().exec(args, null, projectDir)
+            process.consumeProcessOutputStream(stdout)
+            process.waitForOrKill(10 * 1000)
+
+            return stdout.toString()
+        } catch (Exception e) {
+            logger.warn("Could not run command ${Arrays.toString(args)}", e)
+            return ""
+        }
     }
 }
