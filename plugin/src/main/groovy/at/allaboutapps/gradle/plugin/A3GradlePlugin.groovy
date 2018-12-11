@@ -158,7 +158,7 @@ class A3GradlePlugin implements Plugin<Project> {
     }
 
     def getCurrentFlavor() {
-        Gradle gradle = getGradle()
+        def gradle = getGradle()
         String taskReqStr = gradle.getStartParameter().getTaskRequests().toString()
         Pattern pattern
         if (taskReqStr.contains("bundle")) {
