@@ -104,8 +104,7 @@ class A3GradlePlugin implements Plugin<Project> {
             }
 
             // rename bundle aab file
-            def appName = parent.name
-            setProperty("archivesBaseName", "${appName} ${getCurrentFlavor()}-vc${versionCode}-${versionName}")
+            setProperty("archivesBaseName", "bundle-${getCurrentFlavor()}-vc${versionCode}-${versionName}")
 
             // rename apk file
             applicationVariants.all { variant ->
@@ -158,7 +157,7 @@ class A3GradlePlugin implements Plugin<Project> {
     }
 
     def getCurrentFlavor() {
-        Gradle gradle = getGradle()
+        def gradle = getGradle()
         String taskReqStr = gradle.getStartParameter().getTaskRequests().toString()
         Pattern pattern
         if (taskReqStr.contains("bundle")) {
