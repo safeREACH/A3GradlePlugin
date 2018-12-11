@@ -4,6 +4,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 class A3GradlePlugin implements Plugin<Project> {
 
     void apply(Project target) {
@@ -100,6 +103,10 @@ class A3GradlePlugin implements Plugin<Project> {
                 exclude 'META-INF/NOTICE'
             }
 
+            // rename bundle aab file
+            def appName = parent.name
+            setProperty("archivesBaseName", "${appName} ${getCurrentFlavor()}-vc${versionCode}-${versionName}")
+
             // rename apk file
             applicationVariants.all { variant ->
                 variant.outputs.all { output ->
@@ -146,6 +153,30 @@ class A3GradlePlugin implements Plugin<Project> {
             return stdout.toString()
         } catch (Exception e) {
             logger.warn("Could not run command ${Arrays.toString(args)}", e)
+            return ""
+        }
+    }
+
+    def getCurrentFlavor() {
+        def gradle = getGradle()
+        String taskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+        Pattern pattern
+        if (taskReqStr.contains("bundle")) {
+            pattern = Pattern.compile("bundle(\\w+)")
+        } else {
+            pattern = Pattern.compile("assemble(\\w+)")
+        }
+        Matcher matcher = pattern.matcher(taskReqStr)
+        if (matcher.find()) {
+            String flavor = matcher.group(1)
+            // This makes first character to lowercase.
+            char[] c = flavor.toCharArray()
+            c[0] = Character.toLowerCase(c[0])
+            flavor = new String(c)
+            println "getCurrentFlavor:" + flavor
+            return flavor
+        } else {
+            println "getCurrentFlavor:cannot_find_current_flavor"
             return ""
         }
     }
