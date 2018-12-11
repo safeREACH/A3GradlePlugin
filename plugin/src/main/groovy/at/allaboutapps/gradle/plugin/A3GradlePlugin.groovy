@@ -104,8 +104,7 @@ class A3GradlePlugin implements Plugin<Project> {
             }
 
             // rename bundle aab file
-            def appName = parent.name
-            setProperty("archivesBaseName", "${appName} ${getCurrentFlavor()}-vc${versionCode}-${versionName}")
+            setProperty("archivesBaseName", "bundle-${getCurrentFlavor()}-vc${versionCode}-${versionName}")
 
             // rename apk file
             applicationVariants.all { variant ->
