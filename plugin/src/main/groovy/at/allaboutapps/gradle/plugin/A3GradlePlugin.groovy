@@ -2,11 +2,7 @@ package at.allaboutapps.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
-
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 class A3GradlePlugin implements Plugin<Project> {
 
@@ -113,7 +109,7 @@ class A3GradlePlugin implements Plugin<Project> {
                     def split = splitIdentifier.isEmpty() ? splitIdentifier : "-${splitIdentifier.toLowerCase()}"
                     outputFileName = "${project.name}-${variant.name}$split-vc${output.versionCode}-${variant.versionName}.apk"
                     // rename bundle aab file
-                    setProperty("archivesBaseName", "bundle-${variant.name}-vc${versionCode}-${versionName}")
+                    target.ext.set("archivesBaseName", "bundle-${variant.name}-vc${versionCode}-${versionName}")
                 }
             }
 
