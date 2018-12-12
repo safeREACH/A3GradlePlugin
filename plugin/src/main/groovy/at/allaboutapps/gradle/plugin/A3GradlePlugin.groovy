@@ -109,7 +109,7 @@ class A3GradlePlugin implements Plugin<Project> {
                     def split = splitIdentifier.isEmpty() ? splitIdentifier : "-${splitIdentifier.toLowerCase()}"
                     outputFileName = "${project.name}-${variant.name}$split-vc${output.versionCode}-${variant.versionName}.apk"
                     // rename bundle aab file
-                    target.ext.set("archivesBaseName", "bundle-${variant.name}-vc${versionCode}-${versionName}")
+                    target.ext.set("archivesBaseName", "bundle-${variant.name}-vc${output.versionCode}-${variant.versionName}".toString())
                 }
             }
 
