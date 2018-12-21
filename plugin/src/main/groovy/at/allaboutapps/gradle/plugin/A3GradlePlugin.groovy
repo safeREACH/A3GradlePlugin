@@ -23,6 +23,9 @@ class A3GradlePlugin implements Plugin<Project> {
             // Add `INTERNAL` as alternative to `DEBUG`, since debug is also true for Preview builds
             defaultConfig.buildConfigField "boolean", "INTERNAL", "Boolean.valueOf(\"false\")"
 
+            // Rename .aab Files
+            defaultConfig.archivesBaseName = defaultConfig.applicationId + "-" + defaultConfig.versionCode + "-" + defaultConfig.versionName
+
             signingConfigs {
                 aaaDebugKey {
                     if (!target.hasProperty("keyStore")) {
@@ -108,8 +111,6 @@ class A3GradlePlugin implements Plugin<Project> {
                     def splitIdentifier = output.getFilters()?.collect { it.getIdentifier() }?.join("-") ?: ""
                     def split = splitIdentifier.isEmpty() ? splitIdentifier : "-${splitIdentifier.toLowerCase()}"
                     outputFileName = "${project.name}-${variant.name}$split-vc${output.versionCode}-${variant.versionName}.apk"
-                    // rename bundle aab file
-                    target.ext.set("archivesBaseName", "bundle-${variant.name}-vc${output.versionCode}-${variant.versionName}".toString())
                 }
             }
 
