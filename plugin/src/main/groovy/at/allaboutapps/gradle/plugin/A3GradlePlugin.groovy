@@ -3,6 +3,7 @@ package at.allaboutapps.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.Copy
 
 class A3GradlePlugin implements Plugin<Project> {
 
@@ -22,9 +23,6 @@ class A3GradlePlugin implements Plugin<Project> {
 
             // Add `INTERNAL` as alternative to `DEBUG`, since debug is also true for Preview builds
             defaultConfig.buildConfigField "boolean", "INTERNAL", "Boolean.valueOf(\"false\")"
-
-            // Rename .aab Files
-            defaultConfig.archivesBaseName = defaultConfig.applicationId + "-" + defaultConfig.versionCode + "-" + defaultConfig.versionName
 
             signingConfigs {
                 aaaDebugKey {
@@ -118,6 +116,23 @@ class A3GradlePlugin implements Plugin<Project> {
                 abortOnError false
             }
         }
+
+        // rename bundles by copying them to a /outputs/renamedBundle directory
+        target.tasks.whenTaskAdded { task ->
+            if (task.name.startsWith("bundle")) {
+                def renameTaskName = "rename${task.name.capitalize()}Aab"
+                def flavor = task.name.substring("bundle".length()).uncapitalize()
+                target.tasks.create(renameTaskName, Copy) {
+                    from("${target.buildDir}/outputs/bundle/${flavor}/")
+                    include "app.aab"
+                    destinationDir target.file("${target.buildDir}/outputs/renamedBundle/")
+                    rename "app.aab", "${project.name}-${flavor}-vc${gitVersionCode}-${gitVersionName}.aab"
+                }
+
+                task.finalizedBy(renameTaskName)
+            }
+        }
+
     }
 
     static String extractVersionName(Logger logger, File projectDir) {
