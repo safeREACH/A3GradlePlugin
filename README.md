@@ -29,7 +29,7 @@ This plugin enables us (aaa) to facilitate our internal test and release workflo
 `{name}-{variant}{split}-vc{versionCode}-{versionName}`
 
 * **AAB renaming** We use a consistent naming for our artifacts:  
-`{name}-{variant}{split}-vc{versionCode}-{versionName}`
+`{name}-{variant}-vc{versionCode}-{versionName}`
 
 
 * Exclude some common conflict files while with `packagingOptions` and prevent lint errors to break the build.
