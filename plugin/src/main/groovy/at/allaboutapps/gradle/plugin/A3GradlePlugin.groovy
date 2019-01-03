@@ -157,13 +157,24 @@ class A3GradlePlugin implements Plugin<Project> {
 
     static String executeCommand(String[] args, File projectDir, Logger logger) {
         try {
-            def stdout = new ByteArrayOutputStream()
+            def output = new StringBuilder()
 
             Process process = Runtime.getRuntime().exec(args, null, projectDir)
-            process.consumeProcessOutputStream(stdout)
-            process.waitForOrKill(10 * 1000)
 
-            return stdout.toString()
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()))
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()))
+
+            String s
+            while ((s = stdInput.readLine()) != null) {
+                output.append(s)
+            }
+
+            // read any errors from the attempted command
+            while ((s = stdError.readLine()) != null) {
+                logger.error(s)
+            }
+
+            return output.toString()
         } catch (Exception e) {
             logger.warn("Could not run command ${Arrays.toString(args)}", e)
             return ""
