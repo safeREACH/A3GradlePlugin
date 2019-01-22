@@ -13,7 +13,7 @@ This plugin enables us (aaa) to facilitate our internal test and release workflo
 
 * **Build type `preview`** This is a pre-release build type for testing. It should have the same setup as `release`, with the only difference that debugging is enabled. This lets you use `BuildConfig.DEBUG` for logging purposes and other low-key features, while you can use `BuildConfig.INTERNAL` for more intrusive debug features.
 
-* **Shared debug key** Projects will use a shared debug key with the path specified in your `gradle.options`. This ensures the same signing configuration between developer machines.
+* **Shared debug key** Projects will use a shared debug key with the path specified in your (global) `gradle.properties`. This ensures the same signing configuration between developer machines.
 
 * **Release key setup from properties** To have a reusable CI setup the release key can be specified using `releaseKeyStore_file`, `releaseKeyStore_password`, `releaseKeyStore_alias`, and `releaseKeyStore_keyPassword`. These can be set as gradle properties or specified [by environment variables](https://docs.gradle.org/current/userguide/build_environment.html), e.g. `ORG_GRADLE_PROJECT_releaseKeyStore_password`. 
 
