@@ -108,7 +108,7 @@ class A3GradlePlugin implements Plugin<Project> {
                 variant.outputs.all { output ->
                     def splitIdentifier = output.getFilters()?.collect { it.getIdentifier() }?.join("-") ?: ""
                     def split = splitIdentifier.isEmpty() ? splitIdentifier : "-${splitIdentifier.toLowerCase()}"
-                    outputFileName = "${project.name}-${variant.name}$split-vc${output.versionCode}-${variant.versionName}.apk"
+                    outputFileName = "${target.name}-${variant.name}$split-vc${output.versionCode}-${variant.versionName}.apk"
                 }
             }
 
