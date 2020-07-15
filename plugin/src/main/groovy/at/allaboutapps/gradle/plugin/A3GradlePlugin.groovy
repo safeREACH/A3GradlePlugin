@@ -101,14 +101,15 @@ class A3GradlePlugin implements Plugin<Project> {
                 exclude 'META-INF/NOTICE'
             }
 
-
-
             // rename apk file
             applicationVariants.all { variant ->
-                variant.outputs.all { output ->
-                    def splitIdentifier = output.getFilters()?.collect { it.getIdentifier() }?.join("-") ?: ""
-                    def split = splitIdentifier.isEmpty() ? splitIdentifier : "-${splitIdentifier.toLowerCase()}"
-                    outputFileName = "${target.name}-${variant.name}$split-vc${output.versionCode}-${variant.versionName}.apk"
+                // only for releases
+                if (!variant.buildType.debuggable) {
+                    variant.outputs.all { output ->
+                        def splitIdentifier = output.getFilters()?.collect { it.getIdentifier() }?.join("-") ?: ""
+                        def split = splitIdentifier.isEmpty() ? splitIdentifier : "-${splitIdentifier.toLowerCase()}"
+                        outputFileName = "${target.name}-${variant.name}$split-vc${output.versionCode}-${variant.versionName}.apk"
+                    }
                 }
             }
 
