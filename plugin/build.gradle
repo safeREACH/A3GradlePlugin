@@ -32,28 +32,28 @@ String extractVersionName() {
 version = extractVersionName()
 group = 'at.allaboutapps.gradle'
 
-bintray {
-    user = 'allaboutapps'
-    // read pw from secure travis.yml
-    key = System.getenv('BINTRAY_KEY')
+// bintray {
+//     user = 'allaboutapps'
+//     // read pw from secure travis.yml
+//     key = System.getenv('BINTRAY_KEY')
 
-    publications = ['mavenJava']
-    pkg {
-        repo = 'A3-Android'
-        name = "$project.group.$archivesBaseName"
+//     publications = ['mavenJava']
+//     pkg {
+//         repo = 'A3-Android'
+//         name = "$project.group.$archivesBaseName"
 
-        version {
-            name = project.version
-            desc = ''
-            vcsTag = System.getenv('TRAVIS_TAG')
-        }
+//         version {
+//             name = project.version
+//             desc = ''
+//             vcsTag = System.getenv('TRAVIS_TAG')
+//         }
 
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/allaboutapps/A3GradlePlugin'
-        websiteUrl = 'http://www.allaboutapps.at'
-    }
-    configurations = ['archives']
-}
+//         licenses = ['MIT']
+//         vcsUrl = 'https://github.com/allaboutapps/A3GradlePlugin'
+//         websiteUrl = 'http://www.allaboutapps.at'
+//     }
+//     configurations = ['archives']
+// }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
